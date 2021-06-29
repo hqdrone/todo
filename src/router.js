@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import TheNotes from './views/TheNotes.vue'
+import TheNotes from './views/TheNotes'
+import TheNote from "./views/TheNote";
 
 Vue.use(Router)
 
@@ -10,12 +11,13 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'notes',
+      name: 'TheNotes',
       component: TheNotes
     },
     {
-      path: '/note/:id',
-      name: 'note'
+      path: '/note',
+      name: 'TheNote',
+      component: TheNote
     }
   ]
 })

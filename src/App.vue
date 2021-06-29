@@ -12,4 +12,5 @@
     height 100vh
     place-items center
     color #555
+    font-size: 14px
 </style>
