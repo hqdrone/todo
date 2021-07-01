@@ -18,7 +18,6 @@ export default new Vuex.Store({
 		},
 		saveNote(state, payload) {
 
-			// state.notes.push(payload)
 		},
 		deleteNote(state, payload) {
 			state.notes = state.notes.filter(note => note.id !== payload)
@@ -36,13 +35,7 @@ export default new Vuex.Store({
 		}
 	},
 	getters: {
-		getNotes(state) {
-			return state.notes
-		},
-		getNote(state) {
-			return id => {
-				return state.notes.find(note => note.id === id)
-			}
-		}
+		getNotes: state => state.notes,
+		getNote: state => id => state.notes.find(note => note.id === id)
 	}
 })

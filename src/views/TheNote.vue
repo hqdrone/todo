@@ -30,7 +30,8 @@
 					class="edit__button edit__button_delete"
 					@click="deleteNote"
 					v-if="$route.params.id"
-				>Delete Note</div>
+				>Delete Note
+				</div>
 			</div>
 		
 		</div>
@@ -39,6 +40,25 @@
 				<label>
 					Note Title: <input type="text" v-model="note.title">
 				</label>
+			</div>
+		</div>
+		
+		<div
+			class="confirm"
+			v-if="confirmVisible"
+		>
+			<div class="confirm__message">Are you sure?</div>
+			<div class="confirm__buttons">
+				<div
+					class="confirm__button confirm__button_no"
+					@click="confirmNo"
+				>No
+				</div>
+				<div
+					class="confirm__button confirm__button_yes"
+					@click="confirmYes"
+				>Yes
+				</div>
 			</div>
 		</div>
 	</div>
@@ -51,10 +71,25 @@
 			return {
 				note: {
 					title: ''
-				}
+				},
+				confirmVisible: false
 			}
 		},
 		methods: {
+			confirmModal() {
+				const self = this
+				return new Promise((resolve, reject) => {
+					self.confirmVisible = true
+					self.confirmYes = () => {
+						resolve()
+						self.confirmVisible = false
+					}
+					self.confirmNo = () => {
+						reject('cancel')
+						self.confirmVisible = false
+					}
+				})
+			},
 			cancelNoteEdit() {
 				this.$router.push('/')
 			},
@@ -68,8 +103,12 @@
 				this.$router.push('/')
 			},
 			deleteNote() {
-				this.$store.dispatch('deleteNote', this.$route.params.id)
-				this.$router.push('/')
+				this.confirmModal().then(() => {
+					this.$store.dispatch('deleteNote', this.$route.params.id)
+					this.$router.push('/')
+				}).catch(e => {
+					console.log(e)
+				})
 			},
 		},
 		mounted() {

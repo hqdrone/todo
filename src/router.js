@@ -11,17 +11,17 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'TheNotes',
+      name: 'notes',
       component: TheNotes
     },
     {
       path: '/note',
-      name: 'TheNote',
+      name: 'new-note',
       component: TheNote
     },
     {
       path: '/note/:id',
-      name: 'TheEdit',
+      name: 'note',
       component: TheNote
     }
   ]
