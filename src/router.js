@@ -21,7 +21,7 @@ export default new Router({
     },
     {
       path: '/note/:id',
-      name: 'TheNote',
+      name: 'TheEdit',
       component: TheNote
     }
   ]

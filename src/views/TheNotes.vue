@@ -1,9 +1,14 @@
 <template>
 	<div class="notes">
 		<div class="notes__aside">
-			<router-link class="notes__new"	to="/note">Add New</router-link>
+			<router-link class="notes__new" to="/note">Add New Note</router-link>
 		</div>
 		<div class="notes__body">
+			<div
+				class="notes__empty"
+				v-if="notes.length === 0"
+			>Notes not found
+			</div>
 			<app-note
 				v-for="note in notes"
 				:note="note"
@@ -48,6 +53,7 @@
 		box-shadow 2px 2px 2px rgba(#000, .1)
 		border 1px solid #121212
 		background: #181818
+		
 		&__aside
 			background: #121212
 			padding: 16px
@@ -62,15 +68,27 @@
 			grid-template-columns 1fr 1fr
 			overflow-y auto
 		
+		&__empty
+			height: 48px
+			display flex
+			align-items: center;
+			text-align: center
+		
 		&__new
 			background: #181818
 			border-radius: 4px
-			padding: 12px
+			padding: 0 12px
+			height 48px
+			display flex
+			align-items center
 			cursor: pointer
 			box-shadow 2px 2px 2px rgba(#000, .1)
 			border 1px solid aquamarine
 			text-decoration none
 			color: #888
-			display block
+			transition .24s
+			
+			&:hover
+				background: rgba(aquamarine, .1)
 
 </style>

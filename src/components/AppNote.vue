@@ -13,11 +13,16 @@
 			</div>
 		</div>
 		<div class="note__buttons">
-			<div class="note__button note__button_edit">Edit</div>
+			<div
+				class="note__button note__button_edit"
+				@click="editNote(note.id)"
+			>Edit
+			</div>
 			<div
 				class="note__button note__button_delete"
 				@click="deleteNote(note.id)"
-			>Delete</div>
+			>Delete
+			</div>
 		</div>
 	
 	</div>
@@ -28,8 +33,11 @@
 		props: ['note'],
 		name: "AppNote",
 		methods: {
-			deleteNote(id){
+			deleteNote(id) {
 				this.$store.dispatch('deleteNote', id)
+			},
+			editNote(id) {
+				this.$router.push(`/note/${id}`)
 			}
 		}
 	}
@@ -66,9 +74,15 @@
 			border 1px solid
 			box-shadow 2px 2px 2px rgba(#000, .1)
 			background: #1f1f1f
+			transition .24s
+			
 			&_edit
 				border-color gold
+				&:hover
+					background: rgba(gold, .1)
 			
 			&_delete
 				border-color crimson
+				&:hover
+					background: rgba(crimson, .1)
 </style>

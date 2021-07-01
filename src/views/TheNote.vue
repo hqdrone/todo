@@ -4,14 +4,33 @@
 			<div class="edit__buttons">
 				<div
 					class="edit__button edit__button_save"
+					@click="addNote"
+					v-if="!$route.params.id"
+				>Add Note
+				</div>
+				<div
+					class="edit__button edit__button_edit"
+					@click="$router.push('/')"
+					v-if="!$route.params.id"
+				>Back
+				</div>
+				<div
+					class="edit__button edit__button_save"
 					@click="saveNote"
-				>Save Note</div>
+					v-if="$route.params.id"
+				>Save Note
+				</div>
 				<div
 					class="edit__button edit__button_edit"
 					@click="cancelNoteEdit"
-				>Cancel Note Edit
+					v-if="$route.params.id"
+				>Cancel Edit
 				</div>
-				<div class="edit__button edit__button_delete">Delete Note</div>
+				<div
+					class="edit__button edit__button_delete"
+					@click="deleteNote"
+					v-if="$route.params.id"
+				>Delete Note</div>
 			</div>
 		
 		</div>
@@ -39,10 +58,23 @@
 			cancelNoteEdit() {
 				this.$router.push('/')
 			},
+			addNote() {
+				this.note.id = `${Math.random().toFixed(6) * 1000000}`
+				this.$store.dispatch('addNote', this.note)
+				this.$router.push('/')
+			},
 			saveNote() {
-				this.note.id = Math.random()
 				this.$store.dispatch('saveNote', this.note)
 				this.$router.push('/')
+			},
+			deleteNote() {
+				this.$store.dispatch('deleteNote', this.$route.params.id)
+				this.$router.push('/')
+			},
+		},
+		mounted() {
+			if (this.$route.params.id) {
+				this.note = this.$store.getters.getNote(this.$route.params.id)
 			}
 		}
 	}
@@ -104,13 +136,24 @@
 			box-shadow 2px 2px 2px rgba(#000, .1)
 			border 1px solid #f1f1f1
 			background: #181818
+			transition .24s
+			
 			
 			&_save
 				border-color aquamarine
+				
+				&:hover
+					background: rgba(aquamarine, .1)
 			
 			&_edit
 				border-color gold
+				
+				&:hover
+					background: rgba(gold, .1)
 			
 			&_delete
 				border-color crimson
+				
+				&:hover
+					background: rgba(crimson, .1)
 </style>

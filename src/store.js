@@ -13,14 +13,21 @@ export default new Vuex.Store({
 				state.notes = JSON.parse(localStorage.getItem('notes'))
 			}
 		},
-		saveNote(state, payload) {
+		addNote(state, payload) {
 			state.notes.push(payload)
+		},
+		saveNote(state, payload) {
+
+			// state.notes.push(payload)
 		},
 		deleteNote(state, payload) {
 			state.notes = state.notes.filter(note => note.id !== payload)
 		}
 	},
 	actions: {
+		addNote({commit}, payload){
+			commit('addNote', payload)
+		},
 		saveNote({commit}, payload){
 			commit('saveNote', payload)
 		},
@@ -31,6 +38,11 @@ export default new Vuex.Store({
 	getters: {
 		getNotes(state) {
 			return state.notes
+		},
+		getNote(state) {
+			return id => {
+				return state.notes.find(note => note.id === id)
+			}
 		}
 	}
 })
