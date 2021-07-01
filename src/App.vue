@@ -9,8 +9,9 @@
   #app
     font-family Rubik
     display grid
-    height 100vh
+    min-height 100vh
     place-items center
-    color #555
+    color #888
+    background: #1f1f1f
     font-size: 14px
 </style>

@@ -1,12 +1,24 @@
 <template>
 	<div class="edit">
 		<div class="edit__aside">
+			<div class="edit__buttons">
+				<div
+					class="edit__button edit__button_save"
+					@click="saveNote"
+				>Save Note</div>
+				<div
+					class="edit__button edit__button_edit"
+					@click="cancelNoteEdit"
+				>Cancel Note Edit
+				</div>
+				<div class="edit__button edit__button_delete">Delete Note</div>
+			</div>
 		
 		</div>
 		<div class="edit__body">
 			<div class="edit__title">
 				<label>
-					Title: <input type="text">
+					Note Title: <input type="text" v-model="note.title">
 				</label>
 			</div>
 		</div>
@@ -15,7 +27,24 @@
 
 <script>
 	export default {
-		name: "TheNote"
+		name: "TheNote",
+		data() {
+			return {
+				note: {
+					title: ''
+				}
+			}
+		},
+		methods: {
+			cancelNoteEdit() {
+				this.$router.push('/')
+			},
+			saveNote() {
+				this.note.id = Math.random()
+				this.$store.dispatch('saveNote', this.note)
+				this.$router.push('/')
+			}
+		}
 	}
 </script>
 
@@ -27,18 +56,61 @@
 		grid-template-columns 250px 1fr
 		min-height 400px
 		border-radius: 4px;
-		box-shadow 0 4px 16px rgba(#000, .1)
-		border 1px solid #f1f1f1
+		box-shadow 2px 2px 2px rgba(#000, .1)
+		border 1px solid #121212
+		
 		&__aside
-			background: #f1f1f1
+			background: #121212
 			padding: 16px
 			border-radius: 4px 0 0 4px;
+		
 		&__body
 			padding: 16px
-			border-radius: 0  4px 4px 0;
+			border-radius: 0 4px 4px 0;
 			display grid
 			gap: 16px
 			grid-gap 16px
-			grid-template-columns 1fr 1fr 1fr
 			overflow-y auto
+			background: #181818
+			
+			label
+				display flex
+				align-items center
+				white-space nowrap
+			
+			input
+				background: #121212
+				border none
+				box-shadow 2px 2px 2px rgba(#000, .1)
+				border-radius: 4px
+				height: 48px
+				color: #888
+				width 100%
+				margin-left: 12px
+				padding: 0 12px;
+		
+		&__buttons
+			display grid
+			gap 12px
+			grid-gap 12px
+		
+		&__button
+			border-radius: 4px
+			padding: 0 12px
+			height 48px
+			display flex
+			align-items center
+			cursor: pointer
+			box-shadow 2px 2px 2px rgba(#000, .1)
+			border 1px solid #f1f1f1
+			background: #181818
+			
+			&_save
+				border-color aquamarine
+			
+			&_edit
+				border-color gold
+			
+			&_delete
+				border-color crimson
 </style>

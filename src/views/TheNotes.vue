@@ -1,14 +1,13 @@
 <template>
 	<div class="notes">
 		<div class="notes__aside">
-			<router-link class="notes__new" tag="div" to="/note">
-				Add New
-			</router-link>
+			<router-link class="notes__new"	to="/note">Add New</router-link>
 		</div>
 		<div class="notes__body">
 			<app-note
 				v-for="note in notes"
 				:note="note"
+				:key="note.id"
 			></app-note>
 		</div>
 	</div>
@@ -18,35 +17,20 @@
 	import AppNote from "../components/AppNote";
 
 	export default {
-		data() {
-			return {
-				notes: [
-					{
-						title: 'Note 1',
-						tasks: [
-							{
-								label: 'Task 1',
-								checked: false
-							}
-						]
-					},
-					{
-						title: 'Note 2',
-						tasks: [
-							{
-								label: 'Task 1',
-								checked: true
-							},
-							{
-								label: 'Task 2',
-								checked: false
-							}
-						]
-					}
-				]
+		name: 'TheNotes',
+		computed: {
+			notes() {
+				return this.$store.getters.getNotes
 			}
 		},
-		name: 'TheNotes',
+		created() {
+			this.$store.subscribe(((mutation, state) => {
+				localStorage.setItem('notes', JSON.stringify(state.notes))
+			}))
+		},
+		beforeCreate() {
+			this.$store.commit('initNotes')
+		},
 		components: {
 			AppNote
 		}
@@ -61,11 +45,11 @@
 		grid-template-columns 250px 1fr
 		min-height 400px
 		border-radius: 4px;
-		box-shadow 0 4px 16px rgba(#000, .1)
-		border 1px solid #f1f1f1
-		
+		box-shadow 2px 2px 2px rgba(#000, .1)
+		border 1px solid #121212
+		background: #181818
 		&__aside
-			background: #f1f1f1
+			background: #121212
 			padding: 16px
 			border-radius: 4px 0 0 4px;
 		
@@ -75,15 +59,18 @@
 			display grid
 			gap: 16px
 			grid-gap 16px
-			grid-template-columns 1fr 1fr 1fr
+			grid-template-columns 1fr 1fr
 			overflow-y auto
 		
 		&__new
-			background: #fff
+			background: #181818
 			border-radius: 4px
 			padding: 12px
 			cursor: pointer
-			box-shadow 0 4px 16px rgba(#000, .1)
-			border 1px solid #f1f1f1
+			box-shadow 2px 2px 2px rgba(#000, .1)
+			border 1px solid aquamarine
+			text-decoration none
+			color: #888
+			display block
 
 </style>

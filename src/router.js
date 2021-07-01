@@ -18,6 +18,11 @@ export default new Router({
       path: '/note',
       name: 'TheNote',
       component: TheNote
+    },
+    {
+      path: '/note/:id',
+      name: 'TheNote',
+      component: TheNote
     }
   ]
 })

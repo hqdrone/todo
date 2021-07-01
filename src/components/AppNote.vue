@@ -14,48 +14,61 @@
 		</div>
 		<div class="note__buttons">
 			<div class="note__button note__button_edit">Edit</div>
-			<div class="note__button note__button_delete">Delete</div>
+			<div
+				class="note__button note__button_delete"
+				@click="deleteNote(note.id)"
+			>Delete</div>
 		</div>
-		
+	
 	</div>
 </template>
 
 <script>
 	export default {
 		props: ['note'],
-		name: "AppNote"
+		name: "AppNote",
+		methods: {
+			deleteNote(id){
+				this.$store.dispatch('deleteNote', id)
+			}
+		}
 	}
 </script>
 
 <style lang="stylus">
-.note
-	box-shadow 0 4px 16px rgba(#000, .1)
-	padding: 16px
-	border-radius: 4px
-	border 1px solid #f1f1f1
-	display flex
-	flex-direction column
-	&__title
-		margin-bottom: 8px
-		font-weight: 700
-	&__tasks
-		flex 1
-		margin-bottom 8px
-	&__buttons
-		display grid
-		grid-template-columns 1fr 1fr
-		gap: 8px
-		grid-gap 8px
-	&__button
-		padding: 4px
-		cursor: pointer;
-		text-align: center;
+	.note
+		box-shadow 2px 2px 2px rgba(#000, .1)
+		padding: 16px
 		border-radius: 4px
-		border 1px solid #f1f1f1
-		box-shadow 0 4px 16px rgba(#000, .1)
-		&:hover
-			&.note__button_edit
+		display flex
+		flex-direction column
+		background: #121212
+		
+		&__title
+			margin-bottom: 8px
+			font-weight: 700
+		
+		&__tasks
+			flex 1
+			margin-bottom 8px
+		
+		&__buttons
+			display grid
+			grid-template-columns 1fr 1fr
+			gap: 8px
+			grid-gap 8px
+		
+		&__button
+			padding: 4px
+			cursor: pointer;
+			text-align: center;
+			border-radius: 4px
+			border 1px solid
+			box-shadow 2px 2px 2px rgba(#000, .1)
+			background: #1f1f1f
+			&_edit
 				border-color gold
-			&.note__button_delete
+			
+			&_delete
 				border-color crimson
 </style>
