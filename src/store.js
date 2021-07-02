@@ -8,22 +8,27 @@ export default new Vuex.Store({
 		notes: []
 	},
 	mutations: {
-		initNotes(state) {
-			if (localStorage.getItem('notes')) {
-				state.notes = JSON.parse(localStorage.getItem('notes'))
-			}
+		initNotes(state, payload) {
+			state.notes = payload
 		},
 		addNote(state, payload) {
 			state.notes.push(payload)
 		},
 		saveNote(state, payload) {
-
+			state.notes.forEach(note => {
+				if (note.id === payload.id) {
+					note = payload.note
+				}
+			})
 		},
 		deleteNote(state, payload) {
 			state.notes = state.notes.filter(note => note.id !== payload)
 		}
 	},
 	actions: {
+		initNotes({commit}, payload) {
+			commit('initNotes', payload)
+		},
 		addNote({commit}, payload){
 			commit('addNote', payload)
 		},
@@ -35,7 +40,6 @@ export default new Vuex.Store({
 		}
 	},
 	getters: {
-		getNotes: state => state.notes,
-		getNote: state => id => state.notes.find(note => note.id === id)
+		getNotes: state => state.notes
 	}
 })

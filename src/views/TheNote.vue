@@ -41,6 +41,53 @@
 					Note Title: <input type="text" v-model="note.title">
 				</label>
 			</div>
+			<div class="edit__tasks tasks">
+				<div class="tasks__title">Tasks</div>
+				<div class="tasks__list">
+					<div
+						class="tasks__empty"
+						v-if="note.tasks.length === 0"
+					>Tasks not found</div>
+					<div
+						class="tasks__task"
+						v-for="task in note.tasks"
+						:key="task.id"
+					>
+						<label>
+							<input type="checkbox" v-model="task.done">
+							<span>{{task.text}}</span>
+						</label>
+						<div
+							class="tasks__button tasks__button_edit"
+							@click="editTask(task.id)"
+						>Edit</div>
+					</div>
+				</div>
+				<div class="tasks__form">
+					<label>
+						Task Text: <input type="text" v-model="task.text">
+					</label>
+					<div class="tasks__buttons">
+						<div
+							class="tasks__button tasks__button_add"
+							@click="addTask"
+							v-if="!isEditTask"
+						>Add
+						</div>
+						<div
+							class="tasks__button tasks__button_save"
+							@click="saveTask()"
+							v-if="isEditTask"
+						>Save</div>
+						<div
+							class="tasks__button tasks__button_delete"
+							@click="deleteTask(task.id)"
+							v-if="isEditTask"
+						>Delete</div>
+					</div>
+				</div>
+			
+			</div>
 		</div>
 		
 		<div
@@ -65,13 +112,20 @@
 </template>
 
 <script>
+	import {mapGetters} from 'vuex'
 	export default {
 		name: "TheNote",
 		data() {
 			return {
 				note: {
-					title: ''
+					title: '',
+					tasks: []
 				},
+				task: {
+					text: '',
+					done: false
+				},
+				isEditTask: false,
 				confirmVisible: false
 			}
 		},
@@ -99,7 +153,10 @@
 				this.$router.push('/')
 			},
 			saveNote() {
-				this.$store.dispatch('saveNote', this.note)
+				this.$store.dispatch('saveNote', {
+					id: this.$route.params.id,
+					note: this.note
+				})
 				this.$router.push('/')
 			},
 			deleteNote() {
@@ -110,10 +167,48 @@
 					console.log(e)
 				})
 			},
+			addTask() {
+				this.task.id = `${Math.random().toFixed(6) * 1000000}`
+				this.note.tasks.push(this.task)
+				this.task = {
+					text: '',
+					done: false
+				}
+			},
+			editTask(id){
+				this.isEditTask = true
+				this.task = this.note.tasks.find(task => task.id === id)
+				
+			},
+			saveTask(){
+				this.$store.dispatch('saveNote', {
+					id: this.$route.params.id,
+					note: this.note
+				})
+				this.task = {
+					text: '',
+					done: false
+				}
+				this.isEditTask = false
+			},
+			deleteTask(id){
+				this.note.tasks = this.note.tasks.filter(task => task.id !== id)
+				this.task = {
+					text: '',
+					done: false
+				}
+				this.isEditTask = false
+			}
+		},
+		computed: {
+			...mapGetters(['getNotes']),
+			async getNote() {
+				return await this.getNotes.find(note => note.id === this.$route.params.id)
+			}
 		},
 		mounted() {
 			if (this.$route.params.id) {
-				this.note = this.$store.getters.getNote(this.$route.params.id)
+				this.note = this.getNotes.find(note => note.id === this.$route.params.id)
 			}
 		}
 	}
@@ -138,9 +233,6 @@
 		&__body
 			padding: 16px
 			border-radius: 0 4px 4px 0;
-			display grid
-			gap: 16px
-			grid-gap 16px
 			overflow-y auto
 			background: #181818
 			
@@ -150,15 +242,24 @@
 				white-space nowrap
 			
 			input
-				background: #121212
-				border none
-				box-shadow 2px 2px 2px rgba(#000, .1)
-				border-radius: 4px
-				height: 48px
-				color: #888
-				width 100%
-				margin-left: 12px
-				padding: 0 12px;
+				&[type="text"]
+					background: #121212
+					border none
+					box-shadow 2px 2px 2px rgba(#000, .1)
+					border-radius: 4px
+					height: 48px
+					color: #888
+					width 100%
+					margin-left: 12px
+					padding: 0 12px;
+				
+				&[type="checkbox"]
+					margin-right: 12px
+		
+		&__title
+			margin-bottom: 16px
+			padding-bottom: 16px
+			border-bottom: 1px solid #1f1f1f
 		
 		&__buttons
 			display grid
@@ -195,4 +296,64 @@
 				
 				&:hover
 					background: rgba(crimson, .1)
+	
+	.tasks
+		&__task
+			display flex
+			align-items center
+			user-select none
+			
+			&:not(:last-child)
+				margin-bottom: 4px
+		
+		&__title
+			margin-bottom: 16px
+		
+		&__list
+			margin-bottom: 16px
+			padding-bottom: 16px
+			border-bottom: 1px solid #1f1f1f
+		
+		&__buttons
+			display grid
+			grid-template-columns repeat(auto-fit, minmax(0px, 1fr))
+			gap: 8px
+			grid-gap 8px
+			margin-top: 16px
+		
+		&__button
+			padding: 4px
+			cursor: pointer;
+			text-align: center;
+			border-radius: 4px
+			border 1px solid
+			box-shadow 2px 2px 2px rgba(#000, .1)
+			background: #1f1f1f
+			transition .24s
+			
+			&_add
+				border-color aquamarine
+				
+				&:hover
+					background: rgba(aquamarine, .1)
+			
+			&_save
+				border-color aquamarine
+				
+				&:hover
+					background: rgba(aquamarine, .1)
+			
+			&_edit
+				border-color gold
+				margin-left: auto
+				
+				&:hover
+					background: rgba(gold, .1)
+			
+			&_delete
+				border-color crimson
+				
+				&:hover
+					background: rgba(crimson, .1)
+
 </style>

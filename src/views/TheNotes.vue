@@ -6,38 +6,35 @@
 		<div class="notes__body">
 			<div
 				class="notes__empty"
-				v-if="notes.length === 0"
+				v-if="getNotes.length === 0"
 			>Notes not found
 			</div>
 			<app-note
-				v-for="note in notes"
+				v-for="note in getNotes"
 				:note="note"
 				:key="note.id"
 			></app-note>
-			
-			
+		
+		
 		</div>
 	</div>
 </template>
 
 <script>
 	import AppNote from "../components/AppNote";
+	import {mapGetters} from 'vuex'
 
 	export default {
 		name: 'TheNotes',
 		computed: {
-			notes() {
-				return this.$store.getters.getNotes
-			}
+			...mapGetters(['getNotes'])
 		},
 		created() {
 			this.$store.subscribe(((mutation, state) => {
 				localStorage.setItem('notes', JSON.stringify(state.notes))
 			}))
 		},
-		beforeCreate() {
-			this.$store.commit('initNotes')
-		},
+
 		components: {
 			AppNote
 		}
@@ -68,7 +65,7 @@
 			gap: 16px
 			grid-gap 16px
 			grid-template-columns 1fr 1fr
-			overflow-y auto
+			align-content start
 		
 		&__empty
 			height: 48px

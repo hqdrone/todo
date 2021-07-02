@@ -4,13 +4,15 @@
 		<div class="note__tasks">
 			<div
 				class="note__task"
-				v-for="task in note.tasks"
+				v-for="task in slicedTasks"
+				:key="task.id"
 			>
 				<label>
-					<input type="checkbox" :checked="task.checked">
-					{{task.label}}
+					<input type="checkbox" :checked="task.done" disabled>
+					{{task.text}}
 				</label>
 			</div>
+			<div class="note__more" v-if="note.tasks.length > 3">...</div>
 		</div>
 		<div class="note__buttons">
 			<div
@@ -38,6 +40,11 @@
 			},
 			editNote(id) {
 				this.$router.push(`/note/${id}`)
+			}
+		},
+		computed: {
+			slicedTasks() {
+				return this.note.tasks.slice(0, 3)
 			}
 		}
 	}
@@ -78,11 +85,13 @@
 			
 			&_edit
 				border-color gold
+				
 				&:hover
 					background: rgba(gold, .1)
 			
 			&_delete
 				border-color crimson
+				
 				&:hover
 					background: rgba(crimson, .1)
 </style>
