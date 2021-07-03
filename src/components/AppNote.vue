@@ -9,7 +9,7 @@
 			>
 				<label>
 					<input type="checkbox" :checked="task.status" disabled>
-					{{task.text}}
+					<span :class="{done: task.status}">{{task.text}}</span>
 				</label>
 			</div>
 			<div class="note__more" v-if="note.tasks.length > 3">...</div>
@@ -37,6 +37,7 @@
 		methods: {
 			deleteNote(id) {
 				this.$store.dispatch('deleteNote', id)
+				this.$store.commit('setNotes')
 			},
 			editNote(id) {
 				this.$router.push(`/note/${id}`)
@@ -66,6 +67,10 @@
 		&__tasks
 			flex 1
 			margin-bottom 8px
+		&__task
+			span
+				&.done
+					text-decoration line-through
 		
 		&__buttons
 			display grid

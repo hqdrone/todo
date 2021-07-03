@@ -12,7 +12,7 @@
 					class="edit__button edit__button_edit"
 					@click="$router.push('/')"
 					v-if="!$route.params.id"
-				>Back
+				>Cancel
 				</div>
 				<div
 					class="edit__button edit__button_save"
@@ -56,12 +56,12 @@
 					>
 						<label>
 							<input type="checkbox" v-model="task.status">
-							<span>{{task.text}}</span>
+							<span :class="{'done':task.status}">{{task.text}}</span>
 						</label>
 						<div
 							class="tasks__button tasks__button_edit"
 							@click="editTask(task.id)"
-						>Edit
+						>{{!task.isEdit ? 'Edit' : 'Editing...'}}
 						</div>
 					</div>
 				</div>
@@ -74,13 +74,13 @@
 							class="tasks__button tasks__button_add"
 							@click="addTask"
 							v-if="!isEditTask"
-						>Add
+						>Add New Task
 						</div>
 						<div
 							class="tasks__button tasks__button_save"
 							@click="saveTask(task.id)"
 							v-if="isEditTask"
-						>Save
+						>Ок
 						</div>
 						<div
 							class="tasks__button tasks__button_delete"
@@ -129,11 +129,11 @@
 				},
 				task: {
 					text: '',
-					status: false
+					status: false,
+					isEdit: false
 				},
 				isEditTask: false,
 				confirmVisible: false,
-				initNote: {}
 			}
 		},
 		methods: {
@@ -152,18 +152,13 @@
 				})
 			},
 			cancelNoteEdit() {
-				// console.log(this.note.title, this.initNote.title)
-				// this.$store.dispatch('saveNote', {
-				// 	id: this.$route.params.id,
-				// 	note: this.initNote
-				// })
-				this.note = cloneDeep(this.initNote)
-				this.initNote = {}
+				this.$store.dispatch('loadNotes')
 				this.$router.push('/')
 			},
 			addNote() {
 				this.note.id = `${Math.random().toFixed(6) * 1000000}`
 				this.$store.dispatch('addNote', this.note)
+				this.$store.commit('setNotes')
 				this.$router.push('/')
 			},
 			saveNote() {
@@ -171,11 +166,13 @@
 					id: this.$route.params.id,
 					note: this.note
 				})
+				this.$store.commit('setNotes')
 				this.$router.push('/')
 			},
 			deleteNote() {
 				this.confirmModal().then(() => {
 					this.$store.dispatch('deleteNote', this.$route.params.id)
+					this.$store.commit('setNotes')
 					this.$router.push('/')
 				}).catch(e => {
 					console.log(e)
@@ -184,39 +181,34 @@
 			addTask() {
 				this.task.id = `${Math.random().toFixed(6) * 1000000}`
 				this.note.tasks.push(this.task)
-				this.task = {
-					text: '',
-					status: false
-				}
+				this.clearTask()
 			},
 			editTask(id) {
 				this.isEditTask = true
-				this.task = this.note.tasks.find(task => task.id === id)
-
-			},
-			saveTask(id) {
-				// this.$store.dispatch('saveNote', {
-				// 	id: this.$route.params.id,
-				// 	note: this.note
-				// })
 				this.note.tasks.forEach(task => {
-					if (task.id === id) {
-						task.title = this.task.title
-					}
+					task.isEdit = false
 				})
+				this.task = this.note.tasks.find(task => task.id === id)
+				this.task.isEdit = true
+			},
+			clearTask() {
 				this.task = {
 					text: '',
 					status: false
 				}
 				this.isEditTask = false
+			},
+			saveTask(id) {
+				this.note.tasks.forEach(task => {
+					if (task.id === id) {
+						task.isEdit = false
+					}
+				})
+				this.clearTask()
 			},
 			deleteTask(id) {
 				this.note.tasks = this.note.tasks.filter(task => task.id !== id)
-				this.task = {
-					text: '',
-					status: false
-				}
-				this.isEditTask = false
+				this.clearTask()
 			}
 		},
 		computed: {
@@ -227,8 +219,7 @@
 		},
 		mounted() {
 			if (this.$route.params.id) {
-				this.note = this.getNotes.find(note => note.id === this.$route.params.id)
-				this.initNote = cloneDeep(this.note)
+				this.note = this.getNote
 			}
 		},
 	}
@@ -322,7 +313,9 @@
 			display flex
 			align-items center
 			user-select none
-			
+			span
+				&.done
+					text-decoration line-through
 			&:not(:last-child)
 				margin-bottom: 4px
 		

@@ -8,9 +8,7 @@
 <script>
 	export default {
 		beforeCreate() {
-			if (localStorage.getItem('notes')) {
-				this.$store.dispatch('initNotes', JSON.parse(localStorage.getItem('notes')))
-			}
+			this.$store.dispatch('loadNotes')
 		},
 	}
 
