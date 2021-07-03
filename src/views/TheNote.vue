@@ -47,20 +47,22 @@
 					<div
 						class="tasks__empty"
 						v-if="note.tasks.length === 0"
-					>Tasks not found</div>
+					>Tasks not found
+					</div>
 					<div
 						class="tasks__task"
 						v-for="task in note.tasks"
 						:key="task.id"
 					>
 						<label>
-							<input type="checkbox" v-model="task.done">
+							<input type="checkbox" v-model="task.status">
 							<span>{{task.text}}</span>
 						</label>
 						<div
 							class="tasks__button tasks__button_edit"
 							@click="editTask(task.id)"
-						>Edit</div>
+						>Edit
+						</div>
 					</div>
 				</div>
 				<div class="tasks__form">
@@ -76,14 +78,16 @@
 						</div>
 						<div
 							class="tasks__button tasks__button_save"
-							@click="saveTask()"
+							@click="saveTask(task.id)"
 							v-if="isEditTask"
-						>Save</div>
+						>Save
+						</div>
 						<div
 							class="tasks__button tasks__button_delete"
 							@click="deleteTask(task.id)"
 							v-if="isEditTask"
-						>Delete</div>
+						>Delete
+						</div>
 					</div>
 				</div>
 			
@@ -113,6 +117,8 @@
 
 <script>
 	import {mapGetters} from 'vuex'
+	import {cloneDeep} from 'lodash'
+
 	export default {
 		name: "TheNote",
 		data() {
@@ -123,10 +129,11 @@
 				},
 				task: {
 					text: '',
-					done: false
+					status: false
 				},
 				isEditTask: false,
-				confirmVisible: false
+				confirmVisible: false,
+				initNote: {}
 			}
 		},
 		methods: {
@@ -145,6 +152,13 @@
 				})
 			},
 			cancelNoteEdit() {
+				// console.log(this.note.title, this.initNote.title)
+				// this.$store.dispatch('saveNote', {
+				// 	id: this.$route.params.id,
+				// 	note: this.initNote
+				// })
+				this.note = cloneDeep(this.initNote)
+				this.initNote = {}
 				this.$router.push('/')
 			},
 			addNote() {
@@ -172,45 +186,51 @@
 				this.note.tasks.push(this.task)
 				this.task = {
 					text: '',
-					done: false
+					status: false
 				}
 			},
-			editTask(id){
+			editTask(id) {
 				this.isEditTask = true
 				this.task = this.note.tasks.find(task => task.id === id)
-				
+
 			},
-			saveTask(){
-				this.$store.dispatch('saveNote', {
-					id: this.$route.params.id,
-					note: this.note
+			saveTask(id) {
+				// this.$store.dispatch('saveNote', {
+				// 	id: this.$route.params.id,
+				// 	note: this.note
+				// })
+				this.note.tasks.forEach(task => {
+					if (task.id === id) {
+						task.title = this.task.title
+					}
 				})
 				this.task = {
 					text: '',
-					done: false
+					status: false
 				}
 				this.isEditTask = false
 			},
-			deleteTask(id){
+			deleteTask(id) {
 				this.note.tasks = this.note.tasks.filter(task => task.id !== id)
 				this.task = {
 					text: '',
-					done: false
+					status: false
 				}
 				this.isEditTask = false
 			}
 		},
 		computed: {
 			...mapGetters(['getNotes']),
-			async getNote() {
-				return await this.getNotes.find(note => note.id === this.$route.params.id)
+			getNote() {
+				return this.getNotes.find(note => note.id === this.$route.params.id)
 			}
 		},
 		mounted() {
 			if (this.$route.params.id) {
 				this.note = this.getNotes.find(note => note.id === this.$route.params.id)
+				this.initNote = cloneDeep(this.note)
 			}
-		}
+		},
 	}
 </script>
 

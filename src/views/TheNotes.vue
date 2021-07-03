@@ -30,9 +30,9 @@
 			...mapGetters(['getNotes'])
 		},
 		created() {
-			this.$store.subscribe(((mutation, state) => {
-				localStorage.setItem('notes', JSON.stringify(state.notes))
-			}))
+			// this.$store.subscribe(((mutation, state) => {
+			// 	localStorage.setItem('notes', JSON.stringify(state.notes))
+			// }))
 		},
 
 		components: {

@@ -8,7 +8,7 @@
 				:key="task.id"
 			>
 				<label>
-					<input type="checkbox" :checked="task.done" disabled>
+					<input type="checkbox" :checked="task.status" disabled>
 					{{task.text}}
 				</label>
 			</div>
