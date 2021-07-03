@@ -93,25 +93,7 @@
 			
 			</div>
 		</div>
-		
-		<div
-			class="confirm"
-			v-if="confirmVisible"
-		>
-			<div class="confirm__message">Are you sure?</div>
-			<div class="confirm__buttons">
-				<div
-					class="confirm__button confirm__button_no"
-					@click="confirmNo"
-				>No
-				</div>
-				<div
-					class="confirm__button confirm__button_yes"
-					@click="confirmYes"
-				>Yes
-				</div>
-			</div>
-		</div>
+	
 	</div>
 </template>
 
@@ -132,25 +114,12 @@
 					status: false,
 					isEdit: false
 				},
-				isEditTask: false,
-				confirmVisible: false,
+				isEditTask: false
+				
 			}
 		},
+		emits: ['show-confirm'],
 		methods: {
-			confirmModal() {
-				const self = this
-				return new Promise((resolve, reject) => {
-					self.confirmVisible = true
-					self.confirmYes = () => {
-						resolve()
-						self.confirmVisible = false
-					}
-					self.confirmNo = () => {
-						reject('cancel')
-						self.confirmVisible = false
-					}
-				})
-			},
 			cancelNoteEdit() {
 				this.$store.dispatch('loadNotes')
 				this.$router.push('/')
@@ -170,13 +139,7 @@
 				this.$router.push('/')
 			},
 			deleteNote() {
-				this.confirmModal().then(() => {
-					this.$store.dispatch('deleteNote', this.$route.params.id)
-					this.$store.commit('setNotes')
-					this.$router.push('/')
-				}).catch(e => {
-					console.log(e)
-				})
+				this.$emit('show-confirm')
 			},
 			addTask() {
 				this.task.id = `${Math.random().toFixed(6) * 1000000}`
@@ -222,6 +185,7 @@
 				this.note = this.getNote
 			}
 		},
+		
 	}
 </script>
 
@@ -313,9 +277,11 @@
 			display flex
 			align-items center
 			user-select none
+			
 			span
 				&.done
 					text-decoration line-through
+			
 			&:not(:last-child)
 				margin-bottom: 4px
 		

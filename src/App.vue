@@ -1,15 +1,30 @@
 <template>
 	<div id="app">
 		<router-view/>
+		<app-confirm
+			:confirm-visible="confirmVisible"
+			@show-confirm="confirmVisible = true"
+			
+		></app-confirm>
 	</div>
 
 </template>
 
 <script>
+	import AppConfirm from "./components/AppConfirm";
+
 	export default {
 		beforeCreate() {
 			this.$store.dispatch('loadNotes')
 		},
+		data() {
+			return {
+				confirmVisible: false
+			}
+		},
+		components: {
+			AppConfirm
+		}
 	}
 
 </script>
