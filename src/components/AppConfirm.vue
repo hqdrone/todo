@@ -1,103 +1,110 @@
 <template>
-	<div
-		class="confirm"
-		v-if="confirmVisible"
-	>
-		<div class="confirm__message">Are you sure?</div>
-		<div class="confirm__buttons">
-			<div
-				class="confirm__button confirm__button_no"
-				@click="confirmNo"
-			>No
-			</div>
-			<div
-				class="confirm__button confirm__button_yes"
-				@click="confirmYes"
-			>Yes
+	<transition name="fade">
+		<div class="confirm" v-if="isVisible">
+			<div class="confirm__window">
+				<slot></slot>
 			</div>
 		</div>
-	</div>
+	</transition>
+	<!--		<div-->
+	<!--			class="confirm"-->
+	<!--			v-if="getConfirmVisible"-->
+	<!--		>-->
+	<!--			<div class="confirm__message">Are you sure?</div>-->
+	<!--			<div class="confirm__buttons">-->
+	<!--				<div-->
+	<!--					class="confirm__button confirm__button_no"-->
+	<!--					@click="confirmNo"-->
+	<!--				>No-->
+	<!--				</div>-->
+	<!--				<div-->
+	<!--					class="confirm__button confirm__button_yes"-->
+	<!--					@click="confirmYes"-->
+	<!--				>Yes-->
+	<!--				</div>-->
+	<!--			</div>-->
+	<!--		</div>-->
 </template>
 
 <script>
 	export default {
-		name: "AppConfirm",
-		props: ['confirm-visible'],
-		methods: {
-			confirmModal() {
-				const self = this
-				return new Promise((resolve, reject) => {
-					self.confirmVisible = true
-					self.confirmYes = () => {
-						resolve()
-						self.confirmVisible = false
-					}
-					self.confirmNo = () => {
-						reject('cancel')
-						self.confirmVisible = false
-					}
-				})
-			},
-			deleteNote() {
-				this.confirmModal().then(() => {
-					this.$store.dispatch('deleteNote', this.$route.params.id)
-					this.$store.commit('setNotes')
-					this.$router.push('/')
-				}).catch(e => {
-					console.log(e)
-				})
+		name: 'Confirm',
+		data() {
+			return {
+				isVisible: false
 			}
-
+		},
+		methods: {
+			open() {
+				this.isVisible = true
+			},
+			close() {
+				this.isVisible = false
+			}
 		}
 	}
+	// import {mapGetters} from 'vuex'
+	//
+	// export default {
+	// 	name: "AppConfirm",
+	// 	computed: {
+	// 		...mapGetters['getConfirmVisible']
+	// 	},
+	// 	methods: {
+	// 		confirmModal() {
+	// 			const self = this
+	// 			return new Promise((resolve, reject) => {
+	// 				this.$store.commit('setConfirmVisible', true)
+	//
+	// 				self.confirmYes = () => {
+	// 					resolve()
+	// 					this.$store.commit('setConfirmVisible', false)
+	// 				}
+	// 				self.confirmNo = () => {
+	// 					reject('cancel')
+	// 					this.$store.commit('setConfirmVisible', false)
+	// 				}
+	// 			})
+	// 		},
+	// 		deleteNote() {
+	// 			this.confirmModal().then(() => {
+	// 				this.$store.dispatch('deleteNote', this.$route.params.id)
+	// 				this.$store.commit('setNotes')
+	// 				this.$router.push('/')
+	// 			}).catch(e => {
+	// 				console.log(e)
+	// 			})
+	// 		},
+	// 	}
+	// }
 </script>
 
 <style scoped lang="stylus">
+	.fade-enter-active,
+	.fade-leave-active
+		transition opacity 0.3s
+	
+	.fade-enter,
+	.fade-leave-to
+		opacity: 0
+	
 	.confirm
-		box-shadow 2px 2px 2px rgba(#000, .1)
-		padding: 16px
-		border-radius: 4px
-		display flex
-		flex-direction column
-		background: #1f1f1f
 		position fixed
+		background: rgba(0, 0, 0, .88)
+		top: 0
 		left: 0
 		right: 0
-		width: 240px
-		margin: 0 auto
-		top: 50%
-		transform translateY(-50%)
-		
-		&__message
-			margin-bottom: 24px
-			font-weight: 700
-			text-align: center
-		
-		&__buttons
-			display grid
-			grid-template-columns 1fr 1fr
-			gap: 8px
-			grid-gap 8px
-		
-		&__button
-			padding: 4px
-			cursor: pointer;
-			text-align: center;
-			border-radius: 4px
-			border 1px solid
+		bottom: 0
+		padding: 32px 16px
+		display grid
+		place-items center
+		z-index 999
+	
+		&__window
 			box-shadow 2px 2px 2px rgba(#000, .1)
+			padding: 16px
+			border-radius: 4px
 			background: #1f1f1f
-			transition .24s
-			
-			&_yes
-				border-color aquamarine
-				
-				&:hover
-					background: rgba(aquamarine, .1)
-			
-			&_no
-				border-color gold
-				
-				&:hover
-					background: rgba(gold, .1)
+			max-width: 240px
+			width 100%
 </style>

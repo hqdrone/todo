@@ -39,9 +39,9 @@
 	.notes
 		max-width 800px
 		width: 100%
+		min-height 100%
 		display grid
 		grid-template-columns 250px 1fr
-		min-height 400px
 		border-radius: 4px;
 		box-shadow 2px 2px 2px rgba(#000, .1)
 		border 1px solid #121212
@@ -85,4 +85,11 @@
 				background: rgba(aquamarine, .1)
 	
 	
+	@media (max-width: 699.99px)
+		.notes__body
+			grid-template-columns 1fr
+	
+	@media (max-width: 499.99px)
+		.notes
+			grid-template-columns 1fr
 </style>

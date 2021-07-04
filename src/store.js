@@ -6,6 +6,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
 	state: {
 		notes: [],
+		confirmVisible: false
 	},
 	mutations: {
 		loadNotes(state, payload) {
@@ -27,6 +28,9 @@ export default new Vuex.Store({
 		deleteNote(state, payload) {
 			state.notes = state.notes.filter(note => note.id !== payload)
 		},
+		setConfirmVisible(state, payload) {
+			state.confirmVisible = payload
+		}
 	},
 	actions: {
 		loadNotes({commit}) {
@@ -46,5 +50,6 @@ export default new Vuex.Store({
 	},
 	getters: {
 		getNotes: state => state.notes,
+		getConfirmVisible: state => state.confirmVisible
 	}
 })

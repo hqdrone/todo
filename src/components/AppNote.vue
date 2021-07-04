@@ -26,18 +26,31 @@
 			>Delete
 			</div>
 		</div>
-	
+		<confirm-dialogue
+			ref="confirmDialogue"
+		></confirm-dialogue>
 	</div>
 </template>
 
 <script>
+	import ConfirmDialogue from "./ConfirmDialogue";
+
 	export default {
+		components: {
+			ConfirmDialogue
+		},
 		props: ['note'],
 		name: "AppNote",
 		methods: {
-			deleteNote(id) {
-				this.$store.dispatch('deleteNote', id)
-				this.$store.commit('setNotes')
+			async deleteNote(id) {
+				if (await this.$refs.confirmDialogue.show({
+					title: 'Confirm Delete',
+					message: `You want to delete "${this.note.title}" note`,
+					confirmButton: 'Delete'
+				})) {
+					await this.$store.dispatch('deleteNote', id)
+					this.$store.commit('setNotes')
+				}
 			},
 			editNote(id) {
 				this.$router.push(`/note/${id}`)
@@ -67,6 +80,7 @@
 		&__tasks
 			flex 1
 			margin-bottom 8px
+		
 		&__task
 			span
 				&.done

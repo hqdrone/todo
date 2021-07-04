@@ -93,15 +93,21 @@
 			
 			</div>
 		</div>
-	
+		<confirm-dialogue
+			ref="confirmDialogue"
+		></confirm-dialogue>
 	</div>
 </template>
 
 <script>
 	import {mapGetters} from 'vuex'
 	import {cloneDeep} from 'lodash'
+	import ConfirmDialogue from "../components/ConfirmDialogue";
 
 	export default {
+		components: {
+			ConfirmDialogue
+		},
 		name: "TheNote",
 		data() {
 			return {
@@ -115,10 +121,9 @@
 					isEdit: false
 				},
 				isEditTask: false
-				
+
 			}
 		},
-		emits: ['show-confirm'],
 		methods: {
 			cancelNoteEdit() {
 				this.$store.dispatch('loadNotes')
@@ -138,8 +143,16 @@
 				this.$store.commit('setNotes')
 				this.$router.push('/')
 			},
-			deleteNote() {
-				this.$emit('show-confirm')
+			async deleteNote() {
+				if (await this.$refs.confirmDialogue.show({
+					title: 'Confirm Delete',
+					message: `You want to delete "${this.note.title}" note`,
+					confirmButton: 'Delete'
+				})) {
+					await this.$store.dispatch('deleteNote', this.$route.params.id)
+					this.$store.commit('setNotes')
+					await this.$router.push('/')
+				}
 			},
 			addTask() {
 				this.task.id = `${Math.random().toFixed(6) * 1000000}`
@@ -185,7 +198,6 @@
 				this.note = this.getNote
 			}
 		},
-		
 	}
 </script>
 
@@ -195,7 +207,7 @@
 		width: 100%
 		display grid
 		grid-template-columns 250px 1fr
-		min-height 400px
+		min-height 100%
 		border-radius: 4px;
 		box-shadow 2px 2px 2px rgba(#000, .1)
 		border 1px solid #121212
@@ -334,5 +346,10 @@
 				
 				&:hover
 					background: rgba(crimson, .1)
-
+	
+	@media (max-width: 699.99px) {}
+	
+	@media (max-width: 499.99px)
+		.edit
+			grid-template-columns 1fr
 </style>
