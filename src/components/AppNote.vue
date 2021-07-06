@@ -50,6 +50,7 @@
 				})) {
 					await this.$store.dispatch('deleteNote', id)
 					this.$store.commit('setNotes')
+					// await this.$store.dispatch('historyPush')
 				}
 			},
 			editNote(id) {

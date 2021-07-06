@@ -101,7 +101,7 @@
 
 <script>
 	import {mapGetters} from 'vuex'
-	import {cloneDeep} from 'lodash'
+	
 	import ConfirmDialogue from "../components/ConfirmDialogue";
 
 	export default {
@@ -133,6 +133,7 @@
 				this.note.id = `${Math.random().toFixed(6) * 1000000}`
 				this.$store.dispatch('addNote', this.note)
 				this.$store.commit('setNotes')
+				this.$store.dispatch('historyPush')
 				this.$router.push('/')
 			},
 			saveNote() {
@@ -141,6 +142,7 @@
 					note: this.note
 				})
 				this.$store.commit('setNotes')
+				this.$store.dispatch('historyPush')
 				this.$router.push('/')
 			},
 			async deleteNote() {
@@ -151,6 +153,7 @@
 				})) {
 					await this.$store.dispatch('deleteNote', this.$route.params.id)
 					this.$store.commit('setNotes')
+					await this.$store.dispatch('historyPush')
 					await this.$router.push('/')
 				}
 			},

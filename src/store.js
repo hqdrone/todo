@@ -6,9 +6,21 @@ Vue.use(Vuex)
 export default new Vuex.Store({
 	state: {
 		notes: [],
-		confirmVisible: false
+		confirmVisible: false,
+		history: []
 	},
 	mutations: {
+		historyPrev(state, payload) {
+			state.notes = payload
+
+		},
+		historyPush(state, payload) {
+			state.history.push(payload)
+			console.log(state.history)
+		},
+		historySlice(state) {
+			state.history.splice(0, 1)
+		},
 		loadNotes(state, payload) {
 			state.notes = payload
 		},
@@ -33,15 +45,30 @@ export default new Vuex.Store({
 		}
 	},
 	actions: {
+		historyPrev({commit, getters}){
+			console.log('prev')
+			if (getters.getHistory.length > 1) {
+				commit('historyPrev', JSON.parse(getters.getHistory[getters.getHistory.length - 2]))
+			}
+		},
+		historyPush({commit, getters}) {
+			if (JSON.stringify(getters.getNotes) === getters.getHistory[getters.getHistory.length - 1]) return
+			if (getters.getHistory.length < 5) {
+				commit('historyPush', JSON.stringify(getters.getNotes))
+			} else {
+				commit('historySlice')
+				commit('historyPush', JSON.stringify(getters.getNotes))
+			}
+		},
 		loadNotes({commit}) {
 			if (localStorage.getItem('notes')) {
 				commit('loadNotes', JSON.parse(localStorage.getItem('notes')))
 			}
 		},
-		addNote({commit}, payload){
+		addNote({commit}, payload) {
 			commit('addNote', payload)
 		},
-		saveNote({commit}, payload){
+		saveNote({commit}, payload) {
 			commit('saveNote', payload)
 		},
 		deleteNote({commit}, payload) {
@@ -50,6 +77,7 @@ export default new Vuex.Store({
 	},
 	getters: {
 		getNotes: state => state.notes,
-		getConfirmVisible: state => state.confirmVisible
+		getConfirmVisible: state => state.confirmVisible,
+		getHistory: state => state.history,
 	}
 })

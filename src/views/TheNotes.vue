@@ -2,6 +2,12 @@
 	<div class="notes">
 		<div class="notes__aside">
 			<router-link class="notes__new" to="/note">Add New Note</router-link>
+			
+			<div class="history">
+				<div class="history__button" @click="historyPrev">Prev</div>
+				<div class="history__button">Next</div>
+			</div>
+		
 		</div>
 		<div class="notes__body">
 			<div
@@ -27,7 +33,17 @@
 	export default {
 		name: 'TheNotes',
 		computed: {
-			...mapGetters(['getNotes'])
+			...mapGetters(['getNotes', 'getHistory'])
+		},
+		methods: {
+			historyPrev(){
+				this.$store.dispatch('historyPrev')
+			}
+		},
+		mounted() {
+			if (this.getHistory.length === 0) {
+				this.$store.dispatch('historyPush')
+			}
 		},
 		components: {
 			AppNote
@@ -84,6 +100,24 @@
 			&:hover
 				background: rgba(aquamarine, .1)
 	
+	.history
+		display grid
+		grid-template-columns 1fr 1fr
+		gap: 8px
+		grid-gap 8px
+		margin-top: 24px
+		
+		&__button
+			padding: 4px
+			cursor: pointer;
+			text-align: center;
+			border-radius: 4px
+			border 1px solid aquamarine
+			box-shadow 2px 2px 2px rgba(#000, .1)
+			transition .24s
+			background: #1f1f1f
+			&:hover
+				background: rgba(aquamarine, .1)
 	
 	@media (max-width: 699.99px)
 		.notes__body
