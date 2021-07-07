@@ -33,7 +33,10 @@
 				>Delete Note
 				</div>
 			</div>
-		
+			<div class="edit__history history" v-if="this.$route.params.id">
+				<div class="history__button" @click="historyPrev">Prev</div>
+				<div class="history__button">Next</div>
+			</div>
 		</div>
 		<div class="edit__body">
 			<div class="edit__title">
@@ -101,7 +104,7 @@
 
 <script>
 	import {mapGetters} from 'vuex'
-	
+
 	import ConfirmDialogue from "../components/ConfirmDialogue";
 
 	export default {
@@ -125,6 +128,9 @@
 			}
 		},
 		methods: {
+			historyPrev() {
+				// this.$store.dispatch('historyPrev')
+			},
 			cancelNoteEdit() {
 				this.$store.dispatch('loadNotes')
 				this.$router.push('/')
@@ -133,7 +139,6 @@
 				this.note.id = `${Math.random().toFixed(6) * 1000000}`
 				this.$store.dispatch('addNote', this.note)
 				this.$store.commit('setNotes')
-				this.$store.dispatch('historyPush')
 				this.$router.push('/')
 			},
 			saveNote() {
@@ -142,7 +147,6 @@
 					note: this.note
 				})
 				this.$store.commit('setNotes')
-				this.$store.dispatch('historyPush')
 				this.$router.push('/')
 			},
 			async deleteNote() {
@@ -191,7 +195,7 @@
 			}
 		},
 		computed: {
-			...mapGetters(['getNotes']),
+			...mapGetters(['getNotes', 'getHistory']),
 			getNote() {
 				return this.getNotes.find(note => note.id === this.$route.params.id)
 			}
@@ -200,7 +204,10 @@
 			if (this.$route.params.id) {
 				this.note = this.getNote
 			}
-		},
+			if (this.getHistory.length === 0) {
+				this.$store.dispatch('historyPush')
+			}
+		}
 	}
 </script>
 
@@ -350,7 +357,28 @@
 				&:hover
 					background: rgba(crimson, .1)
 	
-	@media (max-width: 699.99px) {}
+	.history
+		display grid
+		grid-template-columns 1fr 1fr
+		gap: 8px
+		grid-gap 8px
+		margin-top: 24px
+		
+		&__button
+			padding: 4px
+			cursor: pointer;
+			text-align: center;
+			border-radius: 4px
+			border 1px solid aquamarine
+			box-shadow 2px 2px 2px rgba(#000, .1)
+			transition .24s
+			background: #1f1f1f
+			
+			&:hover
+				background: rgba(aquamarine, .1)
+	
+	@media (max-width: 699.99px) {
+	}
 	
 	@media (max-width: 499.99px)
 		.edit
