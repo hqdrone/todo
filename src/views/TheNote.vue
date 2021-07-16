@@ -33,10 +33,10 @@
 				>Delete Note
 				</div>
 			</div>
-			<div class="edit__history history" v-if="this.$route.params.id">
-				<div class="history__button" @click="historyPrev">Prev</div>
-				<div class="history__button">Next</div>
-			</div>
+<!--			<div class="edit__history history" v-if="this.$route.params.id">-->
+<!--				<div class="history__button" @click="historyPrev">Prev</div>-->
+<!--				<div class="history__button">Next</div>-->
+<!--			</div>-->
 		</div>
 		<div class="edit__body">
 			<div class="edit__title">
@@ -136,6 +136,7 @@
 				this.$router.push('/')
 			},
 			addNote() {
+				if (!this.note.title) return
 				this.note.id = `${Math.random().toFixed(6) * 1000000}`
 				this.$store.dispatch('addNote', this.note)
 				this.$store.commit('setNotes')
@@ -162,6 +163,7 @@
 				}
 			},
 			addTask() {
+				if (!this.task.text) return
 				this.task.id = `${Math.random().toFixed(6) * 1000000}`
 				this.note.tasks.push(this.task)
 				this.clearTask()
